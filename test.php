@@ -13,8 +13,7 @@ spl_autoload_register(function($path){
     return false;
 });
 
-//var_dump((new Odango\NyaaCollector)->collectForUser('Log Horizon', ['category'=> '1_37']));
+var_dump((new Odango\NyaaCollector)->collectForUser('Log Horizon', ['category'=> '1_37']));
 
-$matcher = new Odango\NyaaMatcher\Fuzzy();
-var_dump($matcher('Log Horzxdfon 2', 'Log Horizon 2'));
-
+//$matcher = new Odango\NyaaMatcher\Fuzzy();
+//var_dump($matcher('Log Horzxdfon 2', 'Log Horizon 2'));

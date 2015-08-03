@@ -41,8 +41,7 @@ class NyaaTorrent {
 		$torrent->siteUrl = (string)$xml->guid;
 		$torrent->category = (string)$xml->category;
 		$torrent->publishDate = \DateTime::createFromFormat('D, d M Y H:i:s T', $xml->pubDate);
-
-        $torrent->userId = $userId;
+    $torrent->userId = $userId;
 
 		return $torrent;
 	}

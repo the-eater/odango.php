@@ -2,11 +2,9 @@
 
 namespace Odango;
 
-include 'NyaaTorrent.php';
-
 class Nyaa {
 	protected $categories = [
-        "All" => "0_0",
+      "All" => "0_0",
 	    "Anime" => "1_0",
 	    "Anime Music Video" => "1_32",
 	    "English-translated Anime" => "1_37",
