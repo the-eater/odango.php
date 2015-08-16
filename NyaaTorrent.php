@@ -40,7 +40,7 @@ class NyaaTorrent {
 		$torrent->torrentUrl = (string)$xml->link;
 		$torrent->siteUrl = (string)$xml->guid;
 		$torrent->category = (string)$xml->category;
-		$torrent->publishDate = \DateTime::createFromFormat('D, d M Y H:i:s T', $xml->pubDate);
+		$torrent->publishDate = \DateTime::createFromFormat('D, d M Y H:i:s T', $xml->pubDate, new \DateTimeZone('UTC'));
     $torrent->userId = $userId;
 
 		return $torrent;
@@ -64,8 +64,9 @@ class NyaaTorrent {
 
 	public function parseMetaInfo()
 	{
-		$data = $this->title;
-		$meta = [];
+		$data     = $this->title;
+		$meta     = [];
+    $unparsed = [];
 
 		// group
 		if (preg_match('~^\[([^\]]+)\]([_ ])?~', $data, $match)) {
@@ -86,6 +87,7 @@ class NyaaTorrent {
 					$subtags = explode(' ', $tag);
 					$missedTags = 0;
 					$subMeta = [];
+          $subUnparsed = [];
 
 					foreach ($subtags as $subtag) {
 						$solved = self::solveIndicator($subtag);
@@ -95,6 +97,8 @@ class NyaaTorrent {
 								$notag = true;
 								break;
 							}
+
+              $subUnparsed[] = $subtag;
 						} else {
 							list($key, $value) = $solved;
 							$subMeta[$key] = $value;
@@ -103,13 +107,16 @@ class NyaaTorrent {
 
 					if (!$notag) {
 						$meta = array_merge($meta, $subMeta);
+            $unparsed = array_merge($unparsed, $subUnparsed);
 					}
 
 				} else {
 					$solved = self::solveIndicator($tag);
 					if ($solved !== false) {
 						$meta[$solved[0]] = $solved[1];
-					}
+					} else {
+            $unparsed[] = $tag;
+          }
 				}
 			}
 		}
@@ -120,7 +127,7 @@ class NyaaTorrent {
 		}
 
 		// vol / type / ep nr.
-		if (preg_match('~ (?:(Vol\.? ?([0-9]+))|([0-9]+)|(batch|o[vn]a|special)|(([0-9]+)-([0-9]+))|((s|season )([0-9]+)))( ?v([0-9]+))? ?(\[|\()~i', $data, $match)) {
+		if (preg_match('~ (?:(Vol\.? ?([0-9]+))|([0-9]+)|(batch(?: (\d+)-(\d+))?|o[vn]a|special)|(([0-9]+)-([0-9]+))|((s|season )([0-9]+)))( ?v([0-9]+))? ?(\[|\()~i', $data, $match)) {
 			if (!empty($match[1])) {
 				$meta['type'] = 'volume';
 				$meta['volume'] = intval($match[2]);
@@ -129,27 +136,30 @@ class NyaaTorrent {
 				$meta['type'] = 'ep';
 				$meta['ep'] = intval($match[3]);
 			} else if (!empty($match[4])) {
-				if (strtolower($match[4]) == 'batch') {
+				if (substr(strtolower($match[4]),0, 5) == 'batch') {
 					$meta['type'] = 'batch';
+          if (isset($match[5])) {
+            $meta['collection'] = [intval($match[5]), intval($match[6])];
+          }
 				} else {
 					$meta['type'] = 'special';
 					$meta['special'] = strtolower($match[4]);
 				}
-			} else if (!empty($match[5])) {
+			} else if (!empty($match[7])) {
 				$meta['type'] = 'collection';
-				$meta['collection'] = [intval($match[6]), intval($match[7])];
-			} else if (!empty($match[8])) {
+				$meta['collection'] = [intval($match[8]), intval($match[9])];
+			} else if (!empty($match[9])) {
 				$meta['type'] = 'season';
-				$meta['season'] = intval($match[9]);
+				$meta['season'] = intval($match[11]);
 			}
 
-			if (!empty($match[11])) {
-				$meta['version'] = intval($match[11]);
+			if (!empty($match[13])) {
+				$meta['version'] = intval($match[13]);
 			}
 		}
 
 		// title
-		if (preg_match('~(?:^|\)|\])((?:(?!\[[^\]+]\]| - |( (Vol\. ?)?[0-9]+(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
+		if (preg_match('~(?:^|\)|\])((?:(?!\[[^\]+]\]| [-\\~] |( (Vol\. ?)?[0-9]+(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
 			if ($match[1]) {
 				$meta['title'] = trim($match[1]);
 			}
@@ -219,7 +229,7 @@ class NyaaTorrent {
 		return $this->torrentId;
 	}
 
-	public function fetchUserId()
+	private function fetchUserId()
 	{
 		// sadly we have to use the site since nothing provides the user id
 		$userId = false;
@@ -232,4 +242,13 @@ class NyaaTorrent {
 
 		return $userId;
 	}
+
+  private function getMeta($meta = null)
+  {
+    if ($meta === null) {
+      return $this->meta;
+    }
+
+    return $this->meta->get($meta);
+  }
 }

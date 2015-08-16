@@ -61,10 +61,10 @@ class NyaaCollector {
 			$hash = $torrent->getSeriesHash();
 
 			if(!isset($torrents[$hash])) {
-				$torrents[$hash] = [];
+				$torrents[$hash] = new NyaaSet($hash);
 			}
 
-			$torrents[$hash][] = $torrent;
+			$torrents[$hash]->add($torrent);
 		}
 
 		return $torrents;
@@ -77,7 +77,6 @@ class NyaaCollector {
 		foreach ($users as $userId) {
 			$userOptions = array_merge($options, ['user' => $userId]);
 			$userFeed = $this->getFeed($query, $userOptions);
-
 			$bigFeed = array_merge($bigFeed, $userFeed);
 		}
 
