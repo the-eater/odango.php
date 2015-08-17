@@ -36,7 +36,7 @@ class NyaaMeta {
       return $this->$meta;
     }
 
-    return $this->rest[$meta];
+    return isset($this->rest[$meta]) ? $this->rest[$meta] : null;
   }
 
   public function set($meta, $value)

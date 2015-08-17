@@ -164,33 +164,72 @@ class NyaaTorrent {
 				$meta['title'] = trim($match[1]);
 			}
 		}
+    if (isset($meta['group'])) {
+      // since the group has no meaning to the auto tag solver 
+      // we got to remove it from the unparsed list
+      $groupKey = array_search($meta['group'], $unparsed);
+      if ($groupKey !== false) {
+        array_splice($unparsed, $groupKey, 1, []);
+      }
+    }
 
-		$this->meta = $meta;
+		$this->meta = NyaaMeta::createFromArray($meta, $unparsed);
 	}
 
 	public function getSeriesHash()
 	{
 		$hash = [];
-		$meta = $this->meta;
 
-		if (isset($meta['group'])) {
-			$hash[] = $meta['group'];
+		if ($this->getMeta('group') !== null) {
+			$hash[] = $this->getMeta('group');
 		}
 
-		if (isset($meta['title'])) {
-			$hash[] = $meta['title'];
+		if ($this->getMeta('title') !== null) {
+			$hash[] = $this->getMeta('title');
 		}
 
-		if (isset($meta['quality'])) {
-			$hash[] = $meta['quality'];
+		if ($this->getMeta('quality') !== null) {
+			$hash[] = $this->getMeta('quality');
 		}
 
-		if (isset($meta['type'])) {
-			$hash[] = $meta['type'];
-		}
+		if ($this->getMeta('type')) {
+			$hash[] = $this->getMeta('type');
+
+      if ($this->getMeta('special') !== null) {
+        $hash[] = $this->getMeta('special') . '.' . microtime(true);
+      }
+
+      if ($this->getMeta('season') !== null) {
+        $hash[] = $this->getMeta('season');
+      }
+    }
 
 		return implode('/', $hash);
 	}
+  
+  public function getItemHash()
+  {
+    return $this->getSeriesHash() . '#' . $this->getSeriesNumber();
+  }
+
+  public function getSeriesNumber()
+  {
+    $type = $this->getMeta('type');
+
+    switch ($type) {
+      case 'batch':
+      case 'special':
+      case 'season':
+        return 0;
+      case 'ep':
+        return $this->getMeta('ep');
+      case 'volume':
+        return $this->getMeta('volume');
+      case 'collection':
+        return $this->getMeta('collection')[0];
+       
+    }
+  }
 
 	public static function solveIndicator($data) {
 		$normData = strtolower(trim($data));
@@ -243,7 +282,7 @@ class NyaaTorrent {
 		return $userId;
 	}
 
-  private function getMeta($meta = null)
+  public function getMeta($meta = null)
   {
     if ($meta === null) {
       return $this->meta;
