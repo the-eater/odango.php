@@ -1,7 +1,8 @@
 {
     "name": "eaterofcode/odango.php",
     "require": {
-        "ark/database": "^0.1.5"
+        "ark/database": "^0.1.5",
+        "php-curl-class/php-curl-class": "^4.6"
     },
     "license": "MIT",
     "authors": [
@@ -10,5 +11,7 @@
             "email": "hello@eaterofco.de"
         }
     ],
-    "autoload": { "Odango\\": "src/" }
+    "autoload": {
+      "psr-4": { "Odango\\": "src/" }
+    }
 }

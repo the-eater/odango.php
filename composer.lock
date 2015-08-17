@@ -1,0 +1,117 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "4ebc5e8699b928925ae0855523d8e1ec",
+    "packages": [
+        {
+            "name": "ark/database",
+            "version": "v0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/arkphp/database.git",
+                "reference": "5ae67b913d3a9e41c4a37763f02481ff6b6aaa0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/arkphp/database/zipball/5ae67b913d3a9e41c4a37763f02481ff6b6aaa0a",
+                "reference": "5ae67b913d3a9e41c4a37763f02481ff6b6aaa0a",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ark\\Database\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Liu Dong",
+                    "email": "ddliuhb@gmail.com",
+                    "homepage": "http://codecent.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Light weight database abstraction",
+            "homepage": "https://github.com/arkphp/database",
+            "keywords": [
+                "database",
+                "mysql",
+                "postgresql",
+                "sqlite",
+                "sqlite3"
+            ],
+            "time": "2015-05-27 13:40:40"
+        },
+        {
+            "name": "php-curl-class/php-curl-class",
+            "version": "4.6.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-curl-class/php-curl-class.git",
+                "reference": "473f080a12322365a4dac1e1a414590ea9fc1839"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/473f080a12322365a4dac1e1a414590ea9fc1839",
+                "reference": "473f080a12322365a4dac1e1a414590ea9fc1839",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Unlicense"
+            ],
+            "authors": [
+                {
+                    "name": "Zach Borboa"
+                }
+            ],
+            "description": "PHP Curl Class is an object-oriented wrapper of the PHP cURL extension.",
+            "homepage": "https://github.com/php-curl-class/php-curl-class",
+            "keywords": [
+                "api",
+                "class",
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "json",
+                "php",
+                "requests",
+                "rest",
+                "restful",
+                "web service",
+                "xml"
+            ],
+            "time": "2015-08-13 15:50:05"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
