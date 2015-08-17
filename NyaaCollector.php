@@ -4,108 +4,108 @@ namespace Odango;
 
 class NyaaCollector {
 
-	protected $nyaa;
-	protected $matcher;
+  protected $nyaa;
+  protected $matcher;
 
-	public function setNyaa($nyaa)
-	{
-		$this->nyaa = $nyaa;
-	}
+  public function setNyaa($nyaa)
+  {
+    $this->nyaa = $nyaa;
+  }
 
-	public function getNyaa()
-	{
-		if ($this->nyaa === null) {
-			$this->setNyaa(new Nyaa());
-		}
+  public function getNyaa()
+  {
+    if ($this->nyaa === null) {
+      $this->setNyaa(new Nyaa());
+    }
 
-		return $this->nyaa;
-	}
+    return $this->nyaa;
+  }
 
-	public function setMatcher($matcher)
-	{
-		$this->matcher = $matcher;
-	}
+  public function setMatcher($matcher)
+  {
+    $this->matcher = $matcher;
+  }
 
-	public function getMatcher()
-	{
-		if ($this->matcher === null) {
-			$this->setMatcher(new NyaaMatcher_Fuzzy());
-		}
+  public function getMatcher()
+  {
+    if ($this->matcher === null) {
+      $this->setMatcher(new NyaaMatcher_Fuzzy());
+    }
 
-		return $this->matcher;
-	}
+    return $this->matcher;
+  }
 
-	protected function getFeed($query, $options)
-	{
-		$options = array_merge(['query' => $query], $options);
-		$nyaa = $this->getNyaa();
-		return $nyaa->getFeed($options);
-	}
+  protected function getFeed($query, $options)
+  {
+    $options = array_merge(['query' => $query], $options);
+    $nyaa = $this->getNyaa();
+    return $nyaa->getFeed($options);
+  }
 
-	public function filterDuplicates($torrents)
-	{
-		$arr;
+  public function filterDuplicates($torrents)
+  {
+    $arr;
 
-		foreach ($torrents as $torrent) {
-			$arr[$torrent->getTorrentId()] = $torrent;
-		}
+    foreach ($torrents as $torrent) {
+      $arr[$torrent->getTorrentId()] = $torrent;
+    }
 
-		return array_values($arr);
-	}
+    return array_values($arr);
+  }
 
-	public function mapByHash($feed) 
-	{
-		$torrents = [];
+  public function mapByHash($feed) 
+  {
+    $torrents = [];
 
-		foreach ($feed as $torrent) {
-			$hash = $torrent->getSeriesHash();
+    foreach ($feed as $torrent) {
+      $hash = $torrent->getSeriesHash();
 
-			if(!isset($torrents[$hash])) {
-				$torrents[$hash] = new NyaaSet($hash);
-			}
+      if(!isset($torrents[$hash])) {
+        $torrents[$hash] = new NyaaSet($hash);
+      }
 
-			$torrents[$hash]->add($torrent);
-		}
+      $torrents[$hash]->add($torrent);
+    }
 
-		return $torrents;
-	}
+    return $torrents;
+  }
 
-	public function collectForUser($query, $users, $options = [])
-	{
-		$bigFeed = [];
+  public function collectForUser($query, $users, $options = [])
+  {
+    $bigFeed = [];
 
-		foreach ($users as $userId) {
-			$userOptions = array_merge($options, ['user' => $userId]);
-			$userFeed = $this->getFeed($query, $userOptions);
-			$bigFeed = array_merge($bigFeed, $userFeed);
-		}
+    foreach ($users as $userId) {
+      $userOptions = array_merge($options, ['user' => $userId]);
+      $userFeed = $this->getFeed($query, $userOptions);
+      $bigFeed = array_merge($bigFeed, $userFeed);
+    }
 
-		$bigFeed = $this->filterDuplicates($bigFeed);
+    $bigFeed = $this->filterDuplicates($bigFeed);
 
-		return $this->mapByHash($bigFeed);
-	}
+    return $this->mapByHash($bigFeed);
+  }
 
-	public function collectRecursive($query, $options = [])
-	{
-		$feed = $this->getFeed($query, $options);
-		
-		$userIds = [];
+  public function collectRecursive($query, $options = [])
+  {
+    $feed = $this->getFeed($query, $options);
+    
+    $userIds = [];
 
-		foreach ($feed as $torrent) {
-			if (!isset($userIds[$torrent->getSeriesHash()])) {
-				$userIds[$torrent->getSeriesHash()] = $torrent->getUserId();
-			}
-		}
+    foreach ($feed as $torrent) {
+      if (!isset($userIds[$torrent->getSeriesHash()])) {
+        $userIds[$torrent->getSeriesHash()] = $torrent->getUserId();
+      }
+    }
 
-		$userIds = array_unique(array_values($userIds));
+    $userIds = array_unique(array_values($userIds));
 
-		return $this->collectForUser($query, $userIds, $options);
-	}
+    return $this->collectForUser($query, $userIds, $options);
+  }
 
-	public function collect($query, $options = [])
-	{
-		$feed = $this->getFeed($query, $options);
+  public function collect($query, $options = [])
+  {
+    $feed = $this->getFeed($query, $options);
 
-		return $this->mapByHash($feed);
-	}
+    return $this->mapByHash($feed);
+  }
 }
