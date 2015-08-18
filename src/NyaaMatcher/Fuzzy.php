@@ -7,13 +7,19 @@ class Fuzzy {
   public $minMatches;
   public $maxDistance;
 
-  function __construct($minMatches = .7, $maxDistance = .2)
+  /**
+   * Creates a new instance of NyaaMatcher\Fuzzy
+   * @param int $minMatches The ratio of minimal amount of words that should fall in the max distance to match (0 - 1)
+   * @param int $maxDistance The max distance of how different a word may be to match
+   * @return NyaaMatcher\Fuzzy
+   */
+  public static function construct($minMatches = .7, $maxDistance = .2)
   {
     $this->minMatches = $minMatches;
     $this->maxDistance = $maxDistance;
   }
 
-  function __invoke($title, $query)
+  public function __invoke($title, $query)
   {
     $titleParts = array_filter(preg_split('~[^A-z0-9]+~', $title));
     $queryParts = array_filter(preg_split('~[^A-z0-9]+~', $query));

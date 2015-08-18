@@ -3,6 +3,11 @@
 namespace Odango;
 
 class Nyaa {
+
+  /**
+   * All categories mapped by $catergoryTitle => $id
+   * @var array
+   */
   protected $categories = [
       "All" => "0_0",
       "Anime" => "1_0",
@@ -30,8 +35,16 @@ class Nyaa {
       "Games" => "6_24"
   ];
 
+  /**
+   * Base url for nyaa
+   * @var string
+   */
   protected $baseUrl = 'http://www.nyaa.se/';
 
+  /**
+   * All filters mapped by $filterTitle => $id
+   * @var array
+   */
   protected $filters = [
     "All" => 0,
     "Remakes" => 1,
@@ -39,6 +52,11 @@ class Nyaa {
     "A+" => 3
   ];
 
+  /**
+   * Get torrent feed for given options
+   * @param array $options array of options available options consist of: query, category, filter, offset and user
+   * @return NyaaTorrent[]
+   */
   public function getFeed($options = []) {
     $get = [
       'page' => 'rss'
@@ -51,7 +69,7 @@ class Nyaa {
     if (!empty($options['category'])) {
       $get['cats'] = $options['category'];
     }
-    
+
     if (!empty($options['filter'])) {
       $get['filter'] = $options['filter'];
     }

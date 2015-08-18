@@ -30,7 +30,14 @@ class NyaaTorrent {
 
   public $meta;
 
-  public static function fromSimpleXml($xml, $userId)
+  /**
+   * Creates a new NyaaTorrent instance from a simple xml element
+   *
+   * @param \SimpleXmlElement $xml The SimpleXmlElement from the Nyaa feed containing the torrent info
+   * @param int $userId The userid of this torrent
+   * @return NyaaTorrent
+   */
+  public static function fromSimpleXml($xml, $userId = null)
   {
     $torrent = new NyaaTorrent();
     $torrent->title = (string)$xml->title;
@@ -46,6 +53,10 @@ class NyaaTorrent {
     return $torrent;
   }
 
+  /**
+   * Sets the torrent info from the description string
+   * @param string $description The description to parse info from
+   */
   public function setInfoFromDescription($description)
   {
     // 1 seeder(s), 20 leecher(s), 63 download(s) - 793.9 MiB
@@ -62,6 +73,9 @@ class NyaaTorrent {
     }
   }
 
+  /**
+   * Parses meta data from the torrent title
+   */
   public function parseMetaInfo()
   {
     $data     = $this->title;
@@ -165,7 +179,7 @@ class NyaaTorrent {
       }
     }
     if (isset($meta['group'])) {
-      // since the group has no meaning to the auto tag solver 
+      // since the group has no meaning to the auto tag solver
       // we got to remove it from the unparsed list
       $groupKey = array_search($meta['group'], $unparsed);
       if ($groupKey !== false) {
@@ -176,6 +190,10 @@ class NyaaTorrent {
     $this->meta = NyaaMeta::createFromArray($meta, $unparsed);
   }
 
+  /**
+   * Gets a uniqe hash for this group, title, quality and type (when this is a special it will be appended with a microtime string so it will always be unique)
+   * @return string
+   */
   public function getSeriesHash()
   {
     $hash = [];
@@ -206,12 +224,20 @@ class NyaaTorrent {
 
     return implode('/', $hash);
   }
-  
+
+  /**
+   * Gets a unique hash for this item in the series, different version have the same item hash
+   * @return string
+   */
   public function getItemHash()
   {
     return $this->getSeriesHash() . '#' . $this->getSeriesNumber();
   }
 
+  /**
+   * Gets the number in the series (always returns 0 for batch, special and season, for a collection it returns the first ep in that collection)
+   * @return int
+   */
   public function getSeriesNumber()
   {
     $type = $this->getMeta('type');
@@ -227,10 +253,15 @@ class NyaaTorrent {
         return $this->getMeta('volume');
       case 'collection':
         return $this->getMeta('collection')[0];
-       
+
     }
   }
 
+  /**
+   * Solves what type of data an indicator is
+   * @param string $data The indicator
+   * @return array An array with the first item containing what it represents, and second item containing the normalized version of the data, false is returned when failing to find what is indicated
+   */
   public static function solveIndicator($data) {
     $normData = strtolower(trim($data));
     foreach (self::$indicators as $key => $tests) {
@@ -246,6 +277,10 @@ class NyaaTorrent {
     return false;
   }
 
+  /**
+   * Gets the user id for this torrent
+   * @return int
+   */
   public function getUserId()
   {
     if ($this->userId === null) {
@@ -255,11 +290,15 @@ class NyaaTorrent {
     return $this->userId;
   }
 
+  /**
+   * Get the id of this torrent
+   * @return int
+   */
   public function getTorrentId()
   {
     if ($this->torrentId === null) {
       $this->torrentId = false;
-      
+
       if (preg_match('~tid=([0-9]+)~', $this->torrentUrl, $match)) {
         $this->torrentId = intval($match[1]);
       }
@@ -268,6 +307,10 @@ class NyaaTorrent {
     return $this->torrentId;
   }
 
+  /**
+   * Gets the user id by getting the overview of the torrent page and looking for the user id there
+   * @return int
+   */
   private function fetchUserId()
   {
     // sadly we have to use the site since nothing provides the user id
@@ -282,6 +325,11 @@ class NyaaTorrent {
     return $userId;
   }
 
+  /**
+   * Gets the NyaaMeta object or a meta value from the meta object if an argument is given
+   * @param string $meta Meta name to get
+   * @return mixed
+   */
   public function getMeta($meta = null)
   {
     if ($meta === null) {

@@ -4,14 +4,27 @@ namespace Odango;
 
 class NyaaCollector {
 
+  /**
+   * @var Nyaa
+   */
   protected $nyaa;
+  /**
+   * The matcher used to check if the title actually corresponds with the given title
+   * @var \Callable
+   */
   protected $matcher;
 
+  /**
+   * @param Nyaa $nyaa
+   */
   public function setNyaa($nyaa)
   {
     $this->nyaa = $nyaa;
   }
 
+  /**
+   * @return Nyaa
+   */
   public function getNyaa()
   {
     if ($this->nyaa === null) {
@@ -21,20 +34,32 @@ class NyaaCollector {
     return $this->nyaa;
   }
 
+  /**
+   * @param \Callable $matcher
+   */
   public function setMatcher($matcher)
   {
     $this->matcher = $matcher;
   }
 
+  /**
+   * @return \Callable
+   */
   public function getMatcher()
   {
     if ($this->matcher === null) {
-      $this->setMatcher(new NyaaMatcher_Fuzzy());
+      $this->setMatcher(NyaaMatcher\Fuzzy::construct());
     }
 
     return $this->matcher;
   }
 
+  /**
+   * Gets the torrent feed for given query and options
+   * @param string $query Query to search for in the nyaa feed
+   * @param array $options Options for the nyaa feed
+   * @return NyaaTorrent[]
+   */
   protected function getFeed($query, $options)
   {
     $options = array_merge(['query' => $query], $options);
@@ -42,6 +67,12 @@ class NyaaCollector {
     return $nyaa->getFeed($options);
   }
 
+  /**
+   * Return list with unique torrents from given array
+   *
+   * @param NyaaTorrent[] The list to filter duplicates out
+   * @param NyaaTorrent[]
+   */
   public function filterDuplicates($torrents)
   {
     $arr;
@@ -53,7 +84,13 @@ class NyaaCollector {
     return array_values($arr);
   }
 
-  public function mapByHash($feed) 
+  /**
+   * Maps the torrents by series hash and collects them in a NyaaSet
+   *
+   * @param NyaaTorrent[] list of torrents to be mapped
+   * @param NyaaSet[]
+   */
+  public function mapByHash($feed)
   {
     $torrents = [];
 
@@ -70,6 +107,14 @@ class NyaaCollector {
     return $torrents;
   }
 
+  /**
+   * Searches for torrents per user
+   *
+   * @param string $query The query to search for
+   * @param int[] $users The users to search in
+   * @param array $options extra options for the nyaa feed
+   * @return NyaaSet[]
+   */
   public function collectForUser($query, $users, $options = [])
   {
     $bigFeed = [];
@@ -85,10 +130,17 @@ class NyaaCollector {
     return $this->mapByHash($bigFeed);
   }
 
+  /**
+   * Searches for torrent and searches for each found torrent in their user for more torrents, to create complete sets
+   *
+   * @param string $query The query to search for
+   * @param array $options Extra options for the nyaa feed
+   * @return NyaaSet[]
+   */
   public function collectRecursive($query, $options = [])
   {
     $feed = $this->getFeed($query, $options);
-    
+
     $userIds = [];
 
     foreach ($feed as $torrent) {
@@ -102,6 +154,12 @@ class NyaaCollector {
     return $this->collectForUser($query, $userIds, $options);
   }
 
+  /**
+   * Searches for torrents by query and returns sets created from it
+   *
+   * @param string $query The query to search for
+   * @param array $options Extra options for the nyaa feed
+   */
   public function collect($query, $options = [])
   {
     $feed = $this->getFeed($query, $options);
