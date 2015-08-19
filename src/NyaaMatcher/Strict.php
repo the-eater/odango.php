@@ -15,8 +15,8 @@ class Strict {
 
   public function __invoke($title, $query)
   {
-    $titleNormalized = preg_replace('~[^A-z0-9]+~', ' ', strtolower(trim($title)));
-    $queryNormalized = preg_replace('~[^A-z0-9]+~', ' ', strtolower(trim($query)));
+    $titleNormalized = preg_replace('~\s+~', ' ', strtolower(trim($title)));
+    $queryNormalized = preg_replace('~\s+~', ' ', strtolower(trim($query)));
     
     return $titleNormalized === $queryNormalized;
   }
