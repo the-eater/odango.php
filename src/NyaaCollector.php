@@ -63,8 +63,14 @@ class NyaaCollector {
   protected function getFeed($query, $options)
   {
     $options = array_merge(['query' => $query], $options);
-    $nyaa = $this->getNyaa();
-    return $nyaa->getFeed($options);
+    $nyaa    = $this->getNyaa();
+    $feed    = $nyaa->getFeed($options);
+    $matcher = $this->getMatcher();
+
+    return array_filter($feed, function ($item) use ($matcher, $query) {
+      $title = $item->getMeta('title');
+      return $title !== null && $matcher($title, $query);
+    });
   }
 
   /**

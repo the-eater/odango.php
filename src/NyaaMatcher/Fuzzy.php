@@ -15,8 +15,11 @@ class Fuzzy {
    */
   public static function construct($minMatches = .7, $maxDistance = .2)
   {
-    $this->minMatches = $minMatches;
-    $this->maxDistance = $maxDistance;
+    $fuzzy = new static();
+    $fuzzy->minMatches = $minMatches;
+    $fuzzy->maxDistance = $maxDistance;
+
+    return $fuzzy;
   }
 
   public function __invoke($title, $query)
