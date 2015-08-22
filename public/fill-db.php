@@ -2,4 +2,4 @@
 
 include '../vendor/autoload.php';
 
-(new Odango\AniDbTitles())->fillDatabase();
+Odango\AniDbTitles::construct([ 'dsn' => 'mysql:dbname=odango;host=localhost', 'username' => 'root', 'password' => null ])->syncDatabase();

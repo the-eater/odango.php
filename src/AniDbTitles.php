@@ -6,8 +6,8 @@ use \Curl\Curl;
 use \Ark\Database\Connection;
 
 class AniDbTitles {
-  protected $dbInfo;
-  protected $table;
+  protected $dbInfo = null;
+  protected $table = 'AniDbTitle';
   protected $titleDumpUrl = 'http://anidb.net/api/anime-titles.xml.gz';
 
   protected $db;
@@ -20,16 +20,15 @@ class AniDbTitles {
    * @param string $table The table to store and access the cached anidb titles
    * @return AniDbTitles The created AniDbTitles instance
    */
-  static function construct($dbInfo, $table)
+  static function construct($dbInfo)
   {
     $aniDbTitles = new AniDbTitles();
-    $aniDbTitles->table = $table;
-    $aniDbtitles->dbInfo = $dbInfo;
+    $aniDbTitles->dbInfo = $dbInfo;
 
     $aniDbTitles->db = new Connection($dbInfo['dsn'], $dbInfo['username'], $dbInfo['password']);
-    $aniDbtitles->model = $this->db->factory('@' . $table);
+    $aniDbTitles->model = $aniDbTitles->db->factory('@' . $aniDbTitles->table);
 
-    return $aniDbTitles
+    return $aniDbTitles;
   }
 
   /**
@@ -46,10 +45,27 @@ class AniDbTitles {
       $curl->close();
     }
 
+    $this->db->exec('START TRANSACTION');
+    $this->db->exec('DELETE FROM ' . $this->table);
+    
     $xml = simplexml_load_file($tmpname);
     foreach ($xml as $child) {
-      var_dump($child);
+      $aid = (int)$child['aid'];
+      foreach($child->title as $title) {
+        $type = (string)$title['type'];
+        $lang = (string)$title->attributes('xml', true)['lang'];
+
+        if ($lang == 'x-jat' || $lang == 'en') {
+          $this->model->insert([
+            'aniDbId'   => $aid,
+            'title'     => (string)$title,
+            'isDefault' => $type == 'main' ? 1 :0
+          ]);
+        }
+      }
     }
+
+    $this->db->exec('COMMIT'); 
   }
 
   /**
@@ -60,5 +76,21 @@ class AniDbTitles {
   public function getAlternativeTitles($title)
   {
 
+  }
+
+  public function createTable()
+  {
+    $createQuery = "CREATE TABLE {$this->table} (
+      id INTEGER NOT NULL AUTO_INCREMENT,
+      aniDbId INTEGER NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      isDefault TINYINT NOT NULL,
+      PRIMARY KEY (`id`),
+      INDEX index_aniDbId (aniDbId),
+      INDEX index_aniDbId_IsDefault (aniDbId, isDefault),
+      INDEX index_title (title)
+    );";
+
+    $this->db->exec($createQuery);
   }
 }
