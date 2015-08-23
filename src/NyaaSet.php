@@ -35,4 +35,12 @@ class NyaaSet {
   {
     return array_values($this->torrentsByItemHash);
   }
+
+  public function getFirstMeta()
+  {
+    $torrents = array_values($this->getTorrents());
+    $torrent  = $torrents[0];
+
+    return $torrent->getMeta();
+  }
 }
