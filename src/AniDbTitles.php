@@ -47,7 +47,7 @@ class AniDbTitles {
 
     $this->db->exec('START TRANSACTION');
     $this->db->exec('DELETE FROM ' . $this->table);
-    
+
     $xml = simplexml_load_file($tmpname);
     foreach ($xml as $child) {
       $aid = (int)$child['aid'];
@@ -65,7 +65,7 @@ class AniDbTitles {
       }
     }
 
-    $this->db->exec('COMMIT'); 
+    $this->db->exec('COMMIT');
   }
 
   /**
@@ -83,7 +83,7 @@ class AniDbTitles {
       ->join($this->table . ' as search', 'main.aniDbId = search.aniDbId')
       ->where('main.title = :title')
       ->queryColumn([ 'title' => $title ]);
-      
+
   }
 
   public function autocomplete($title)
