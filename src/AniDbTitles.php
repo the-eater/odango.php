@@ -75,7 +75,28 @@ class AniDbTitles {
    */
   public function getAlternativeTitles($title)
   {
+    $builder = $this->db->builder();
 
+    return $builder
+      ->select('search.title')
+      ->from([$this->table . ' as main'])
+      ->join($this->table . ' as search', 'main.aniDbId = search.aniDbId')
+      ->where('main.title = :title')
+      ->queryColumn([ 'title' => $title ]);
+      
+  }
+
+  public function autocomplete($title)
+  {
+    $builder = $this->db->builder();
+
+    return $builder
+      ->distinct()
+      ->select('title')
+      ->from($this->table)
+      ->where('title LIKE :title')
+      ->limit(25)
+      ->queryColumn([ 'title' => str_replace('%', '\\%', $title).'%' ]);
   }
 
   public function createTable()
