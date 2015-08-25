@@ -346,7 +346,7 @@ class NyaaTorrent {
         "seeds"       => $this->seeds,
         "leechers"    => $this->leechers,
         "size"        => $this->size,
-        "downloads"   => $this->downloads
+        "downloads"   => $this->downloads,
         "torrentId"   => $this->getTorrentId(),
         "userId"      => $this->userId,
         "category"    => $this->category,
@@ -358,6 +358,6 @@ class NyaaTorrent {
       "seriesNumber"   => $this->getSeriesNumber(),
       "torrentUrl"     => $this->torrentUrl,
       "viewUrl"        => $this->viewUrl
-    ]
+    ];
   }
 }

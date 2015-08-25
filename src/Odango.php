@@ -24,7 +24,7 @@ class Odango {
     return $this->aniDbTitles;
   }
 
-  public function collect($query, $userIds = [])
+  public function collect($query, $userIds = [], $options = [])
   {
     $nyaaCollector = $this->getNyaaCollector();
     $aniDbTitles = $this->getAniDbTitles();
@@ -38,9 +38,10 @@ class Odango {
 
     foreach ($titles as $title) {
       if (empty($userIds)) {
-        $sets = array_merge($sets, $nyaaCollector->collectRecursive($title));
+        $sets = array_merge($sets, $nyaaCollector->collectRecursive($title, $options));
+
       } else {
-        $sets = array_merge($sets, $nyaaCollector->collectForUser($title, $userIds));
+        $sets = array_merge($sets, $nyaaCollector->collectForUser($title, $userIds, $options));
       }
     }
 
