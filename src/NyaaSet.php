@@ -39,8 +39,23 @@ class NyaaSet {
   public function getFirstMeta()
   {
     $torrents = array_values($this->getTorrents());
-    $torrent  = $torrents[0];
+    if (count($torrents) > 0) {
+      $torrent  = $torrents[0];
+      return $torrent->getMeta();
+    }
 
-    return $torrent->getMeta();
+    return null;
   }
+
+  public function toArray()
+  {
+    $arr = [
+       "meta"     => $this->getFirstMeta(),
+       "torrents" => array_map($this->getTorrents(), function ($item) {
+           return $item->toArray();
+       })
+    ];
+
+    return $arr;
+  }  
 }

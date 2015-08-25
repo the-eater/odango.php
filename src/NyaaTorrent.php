@@ -338,4 +338,26 @@ class NyaaTorrent {
 
     return $this->meta->get($meta);
   }
+
+  public function toArray()
+  {
+    return [
+      "info" => [
+        "seeds"       => $this->seeds,
+        "leechers"    => $this->leechers,
+        "size"        => $this->size,
+        "downloads"   => $this->downloads
+        "torrentId"   => $this->getTorrentId(),
+        "userId"      => $this->userId,
+        "category"    => $this->category,
+        "publishDate" => $this->publishDate
+      ],
+      "meta"           => $this->getMeta(),
+      "seriesHash"     => $this->getSeriesHash(),
+      "itemHash"       => $this->getItemHash(),
+      "seriesNumber"   => $this->getSeriesNumber(),
+      "torrentUrl"     => $this->torrentUrl,
+      "viewUrl"        => $this->viewUrl
+    ]
+  }
 }

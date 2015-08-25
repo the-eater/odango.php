@@ -81,7 +81,7 @@ class NyaaCollector {
    */
   public function filterDuplicates($torrents)
   {
-    $arr;
+    $arr = [];
 
     foreach ($torrents as $torrent) {
       $arr[$torrent->getTorrentId()] = $torrent;
