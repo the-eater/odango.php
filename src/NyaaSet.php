@@ -51,9 +51,9 @@ class NyaaSet {
   {
     $arr = [
        "meta"     => $this->getFirstMeta(),
-       "torrents" => array_map($this->getTorrents(), function ($item) {
+       "torrents" => array_map(function ($item) {
            return $item->toArray();
-       })
+       }, $this->getTorrents());
     ];
 
     return $arr;

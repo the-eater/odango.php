@@ -45,6 +45,6 @@ class Odango {
       }
     }
 
-    return $sets;
+    return array_map(function($set){ return $set->toArray(); }, array_values($sets));
   }
 }
