@@ -5,82 +5,10 @@ namespace Odango;
 class NyaaMeta {
 
   /**
-   * The found (sub)group
-   * @var string
-   */
-  private $group;
-
-  /**
-   * The found qaulity (can be #x#, #p or just #)
-   * @var string
-   */
-  private $quality;
-
-  /**
-   * The found audio format
-   * @var string
-   */
-  private $audio;
-
-  /**
-   * The found video container (mp4, avi, mkv, etc.)
-   * @var string
-   */
-  private $container;
-
-  /**
-   * The found type of the torrent (batch, ep, collection, volume, season and special)
-   * @var string
-   */
-  private $type;
-
-  /**
-   * The found episode number
-   * @var int
-   */
-  private $ep;
-
-  /**
-   * The found volume number
-   * @var int
-   */
-  private $volume;
-
-  /**
-   * The found title
-   * @var string
-   */
-  private $title;
-
-  /**
-   * The found video codec
-   * @var string
-   */
-  private $video;
-
-  /**
-   * The found crc32
-   * @var string
-   */
-  private $crc32;
-
-  /**
-   * The found source of this torrent (BD, DVD)
-   * @var string
-   */
-  private $source;
-
-  /**
-   * The found season of this torrent
-   * @var int
-   */
-  private $season;
-
-  /**
-   * Mapped but undocumented values
+   * values we were able to indentify
    * @var array
    */
-  private $rest = [];
+  private $parsed = [];
 
   /**
    * Tags that couldn't be parsed from this torrent
@@ -114,11 +42,7 @@ class NyaaMeta {
    */
   public function get($meta)
   {
-    if (property_exists($this, $meta)) {
-      return $this->$meta;
-    }
-
-    return isset($this->rest[$meta]) ? $this->rest[$meta] : null;
+    return isset($this->parsed[$meta]) ? $this->parsed[$meta] : null;
   }
 
   /**
@@ -128,11 +52,7 @@ class NyaaMeta {
    */
   public function set($meta, $value)
   {
-    if (property_exists($this, $meta)) {
-      $this->$meta = $value;
-    }
-
-    $this->rest[$meta] = $value;
+    $this->parsed[$meta] = $value;
   }
 
   /**
@@ -150,5 +70,12 @@ class NyaaMeta {
   public function setUnparsed($arr)
   {
     $this->unparsed = $arr;
+  }
+
+  public function toArray()
+  {
+      return array_merge($this->parsed, [
+        "unparsed" => $this->unparsed
+      ]);
   }
 }

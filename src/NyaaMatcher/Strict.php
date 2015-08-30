@@ -17,7 +17,7 @@ class Strict {
   {
     $titleNormalized = preg_replace('~\s+~', ' ', strtolower(trim($title)));
     $queryNormalized = preg_replace('~\s+~', ' ', strtolower(trim($query)));
-    
+
     return $titleNormalized === $queryNormalized;
   }
 }

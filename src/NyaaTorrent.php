@@ -141,14 +141,14 @@ class NyaaTorrent {
     }
 
     // vol / type / ep nr.
-    if (preg_match('~ (?:(Vol\.? ?([0-9]+))|([0-9]+)|(batch(?: (\d+)-(\d+))?|o[vn]a|special)|(([0-9]+)-([0-9]+))|((s|season )([0-9]+)))( ?v([0-9]+))? ?(\[|\()~i', $data, $match)) {
+    if (preg_match('~ (?:(Vol\.? ?([0-9]+))|([0-9]+(?:\.[0-9]+)?)|(batch(?: (\d+)-(\d+))?|o[vn]a|special)|(([0-9]+)-([0-9]+))|((s|season )([0-9]+)))( ?v([0-9]+))? ?(\[|\()~i', $data, $match)) {
       if (!empty($match[1])) {
         $meta['type'] = 'volume';
         $meta['volume'] = intval($match[2]);
 
       } else if (!empty($match[3]) && /* in case a series ends with a number and has BATCH in the tags */ !isset($meta['type'])) {
         $meta['type'] = 'ep';
-        $meta['ep'] = intval($match[3]);
+        $meta['ep'] = floatval($match[3]);
       } else if (!empty($match[4])) {
         if (substr(strtolower($match[4]),0, 5) == 'batch') {
           $meta['type'] = 'batch';
@@ -173,7 +173,7 @@ class NyaaTorrent {
     }
 
     // title
-    if (preg_match('~(?:^|\)|\])((?:(?!\[[^\]+]\]| [-\\~] |( (Vol\. ?)?[0-9]+(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
+    if (preg_match('~(?:^|\)|\])((?:(?!\[[^\]+]\]| [-\\~] |( (Vol\. ?)?[0-9]+(-[0-9]+)?(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
       if ($match[1]) {
         $meta['title'] = trim($match[1]);
       }
@@ -342,7 +342,8 @@ class NyaaTorrent {
   public function toArray()
   {
     return [
-      "info" => [
+      "title" => $this->title,
+      "info"  => [
         "seeds"       => $this->seeds,
         "leechers"    => $this->leechers,
         "size"        => $this->size,
@@ -352,12 +353,12 @@ class NyaaTorrent {
         "category"    => $this->category,
         "publishDate" => $this->publishDate
       ],
-      "meta"           => $this->getMeta(),
+      "meta"           => $this->getMeta()->toArray(),
       "seriesHash"     => $this->getSeriesHash(),
       "itemHash"       => $this->getItemHash(),
       "seriesNumber"   => $this->getSeriesNumber(),
       "torrentUrl"     => $this->torrentUrl,
-      "viewUrl"        => $this->viewUrl
+      "siteUrl"        => $this->siteUrl
     ];
   }
 }

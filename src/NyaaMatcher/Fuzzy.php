@@ -24,8 +24,9 @@ class Fuzzy {
 
   public function __invoke($title, $query)
   {
-    $titleParts = array_filter(preg_split('~[^A-z0-9]+~', $title));
-    $queryParts = array_filter(preg_split('~[^A-z0-9]+~', $query));
+    $titleParts = array_filter(preg_split('~[^A-z0-9]+~', strtolower($title)));
+    $queryParts = array_filter(preg_split('~[^A-z0-9]+~', strtolower($query)));
+
     $matches    = 0;
         
     for ($i = 0; $i < count($queryParts); $i++) {
@@ -44,6 +45,6 @@ class Fuzzy {
     } 
 
     $minMatches = ceil($this->minMatches * count($queryPart));
-    return $minMatches < $matches;
+    return $minMatches <= $matches;
   }
 }

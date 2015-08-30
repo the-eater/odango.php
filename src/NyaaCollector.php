@@ -48,7 +48,7 @@ class NyaaCollector {
   public function getMatcher()
   {
     if ($this->matcher === null) {
-      $this->setMatcher(NyaaMatcher\Fuzzy::construct());
+      $this->setMatcher(NyaaMatcher\Strict::construct());
     }
 
     return $this->matcher;
@@ -65,6 +65,7 @@ class NyaaCollector {
     $options = array_merge(['query' => $query], $options);
     $nyaa    = $this->getNyaa();
     $feed    = $nyaa->getFeed($options);
+
     $matcher = $this->getMatcher();
 
     return array_filter($feed, function ($item) use ($matcher, $query) {

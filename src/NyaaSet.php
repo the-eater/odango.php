@@ -41,7 +41,7 @@ class NyaaSet {
     $torrents = array_values($this->getTorrents());
     if (count($torrents) > 0) {
       $torrent  = $torrents[0];
-      return $torrent->getMeta();
+      return $torrent->getMeta()->toArray();
     }
 
     return null;
@@ -53,7 +53,7 @@ class NyaaSet {
        "meta"     => $this->getFirstMeta(),
        "torrents" => array_map(function ($item) {
            return $item->toArray();
-       }, $this->getTorrents());
+       }, $this->getTorrents())
     ];
 
     return $arr;

@@ -5,6 +5,7 @@ namespace Odango;
 class Odango {
   protected $nyaaCollector;
   protected $aniDbTitles;
+  protected $nyaaExpander;
 
   protected function getNyaaCollector()
   {
@@ -24,6 +25,15 @@ class Odango {
     return $this->aniDbTitles;
   }
 
+  protected function getNyaaExpander()
+  {
+    if ($this->nyaaExpander === null) {
+      $this->nyaaExpander = new NyaaExpander();
+    }
+
+    return $this->nyaaExpander;
+  }
+
   public function collect($query, $userIds = [], $options = [])
   {
     $nyaaCollector = $this->getNyaaCollector();
@@ -34,14 +44,16 @@ class Odango {
       $titles = [$query];
     }
 
+    $nyaaExpander = new NyaaExpander();
     $sets = [];
 
     foreach ($titles as $title) {
-      if (empty($userIds)) {
-        $sets = array_merge($sets, $nyaaCollector->collectRecursive($title, $options));
-
-      } else {
-        $sets = array_merge($sets, $nyaaCollector->collectForUser($title, $userIds, $options));
+      foreach ($nyaaExpander->expand($title) as $expandedTitle) {
+        if (empty($userIds)) {
+          $sets = array_merge($sets, $nyaaCollector->collectRecursive($expandedTitle, $options));
+        } else {
+          $sets = array_merge($sets, $nyaaCollector->collectForUser($expandedTitle, $userIds, $options));
+        }
       }
     }
 

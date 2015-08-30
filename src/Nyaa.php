@@ -83,17 +83,28 @@ class Nyaa {
     }
 
     $fullUrl = $this->baseUrl.'?'.http_build_query($get);
-    $xml = file_get_contents($fullUrl);
-    $simple = simplexml_load_string($xml);
+    
+    $pool = new \Stash\Pool(new Stash\Driver\Sqlite());
 
-    $items = $simple->channel->item;
+    $item = $pool->getItem('nyaa/feed/'.hash('sha512', $fullUrl));
 
-    $torrents = [];
+    if ($item->isMiss()) {
+      $item->lock();
 
-    foreach ($items as $item) {
-      $torrents[] = NyaaTorrent::fromSimpleXml($item, isset($get['user']) ? $get['user'] : null);
+      $xml = file_get_contents($fullUrl);
+      $simple = simplexml_load_string($xml);
+
+      $items = $simple->channel->item;
+
+      $torrents = [];
+
+      foreach ($items as $item) {
+        $torrents[] = NyaaTorrent::fromSimpleXml($item, isset($get['user']) ? $get['user'] : null);
+      }
+
+      $this->set($torrents, 864000);
     }
 
-    return $torrents;
+    return $item->get();
   }
 }

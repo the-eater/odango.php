@@ -51,16 +51,24 @@ class AniDbTitles {
     $xml = simplexml_load_file($tmpname);
     foreach ($xml as $child) {
       $aid = (int)$child['aid'];
+      $added = [];
       foreach($child->title as $title) {
         $type = (string)$title['type'];
         $lang = (string)$title->attributes('xml', true)['lang'];
 
         if ($lang == 'x-jat' || $lang == 'en') {
-          $this->model->insert([
-            'aniDbId'   => $aid,
-            'title'     => (string)$title,
-            'isDefault' => $type == 'main' ? 1 :0
-          ]);
+
+          if (!in_array((string)$title, $added)) {
+            $added[] = (string)$title;          
+
+            $this->model->insert([
+              'aniDbId'   => $aid,
+              'title'     => (string)$title,
+              'isDefault' => $type == 'main' ? 1 :0
+            ]);
+          } else if ( $type == 'main' ) {
+            $this->model->update(['isDefault' => 1], 'AniDbId = '.$aid.' AND title = '.$this->db->quote((string)$title)); 
+          }
         }
       }
     }
@@ -84,6 +92,37 @@ class AniDbTitles {
       ->where('main.title = :title')
       ->queryColumn([ 'title' => $title ]);
 
+  }
+
+  public function getAlternativeTitlesByAnime($title)
+  {
+    $builder = $this->db->builder();
+
+    $titles = $builder
+      ->select('search.*')
+      ->from([$this->table . ' as main'])
+      ->join($this->table . ' as search', 'main.aniDbId = search.aniDbId')
+      ->where('main.title = :title')
+      ->groupBy('search.id')
+      ->queryAll([ 'title' => $title ]);
+
+    return array_values(array_reduce($titles, function($carry, $item) {
+      if ( ! isset($carry[$item['aniDbId']]) ) {
+        $carry[$item['aniDbId']] = [
+          "aniDbId" => $item['aniDbId'],
+          "main"    => "",
+          "titles"  => []
+        ];
+      }
+
+      $carry[$item['aniDbId']]['titles'][] = $item['title'];
+      
+      if ($item['isDefault'] == 1) {
+        $carry[$item['aniDbId']]['main'] = $item['title']; 
+      }
+
+      return $carry;
+    }, []));
   }
 
   public function autocomplete($title)
