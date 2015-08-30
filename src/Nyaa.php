@@ -84,12 +84,12 @@ class Nyaa {
 
     $fullUrl = $this->baseUrl.'?'.http_build_query($get);
     
-    $pool = new \Stash\Pool(new Stash\Driver\Sqlite());
+    $pool = new \Stash\Pool(new \Stash\Driver\Sqlite());
+    
+    $cache = $pool->getItem('nyaa/feed/'.hash('sha512', $fullUrl));
 
-    $item = $pool->getItem('nyaa/feed/'.hash('sha512', $fullUrl));
-
-    if ($item->isMiss()) {
-      $item->lock();
+    if ($cache->isMiss()) {
+      $cache->lock();
 
       $xml = file_get_contents($fullUrl);
       $simple = simplexml_load_string($xml);
@@ -102,9 +102,11 @@ class Nyaa {
         $torrents[] = NyaaTorrent::fromSimpleXml($item, isset($get['user']) ? $get['user'] : null);
       }
 
-      $this->set($torrents, 864000);
+      $cache->set($torrents, 864000);
     }
 
-    return $item->get();
+    $data = $cache->get();
+
+    return $data;
   }
 }

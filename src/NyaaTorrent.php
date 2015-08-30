@@ -313,16 +313,24 @@ class NyaaTorrent {
    */
   private function fetchUserId()
   {
-    // sadly we have to use the site since nothing provides the user id
-    $userId = false;
-    $html = file_get_contents($this->siteUrl);
+    $pool = new \Stash\Pool(new \Stash\Driver\Sqlite());
 
-    // lets not depend on the actual domain
-    if(preg_match('~\/\?user\=([0-9]+)~i', $html, $match)) {
-      $userId = intval($match[1]);
+    $cache = $pool->getItem('nyaa/user/'.$this->getTorrentId());
+
+    if ($cache->isMiss()) {
+      // sadly we have to use the site since nothing provides the user id
+      $userId = false;
+      $html = file_get_contents($this->siteUrl);
+
+      // lets not depend on the actual domain
+      if(preg_match('~\/\?user\=([0-9]+)~i', $html, $match)) {
+        $userId = intval($match[1]);
+      }
+
+      $cache->set($userId);
     }
 
-    return $userId;
+    return $cache->get();
   }
 
   /**
