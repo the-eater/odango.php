@@ -14,6 +14,10 @@ class NyaaExpander {
       "S3",
       "Third Season",
       "3rd Season"
+    ],
+    [
+      "³",
+      "3"
     ]
   ];
 
