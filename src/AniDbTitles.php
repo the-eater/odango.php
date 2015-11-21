@@ -59,7 +59,7 @@ class AniDbTitles {
         if ($lang == 'x-jat' || $lang == 'en') {
 
           if (!in_array((string)$title, $added)) {
-            $added[] = (string)$title;          
+            $added[] = (string)$title;
 
             $this->model->insert([
               'aniDbId'   => $aid,
@@ -67,7 +67,7 @@ class AniDbTitles {
               'isDefault' => $type == 'main' ? 1 :0
             ]);
           } else if ( $type == 'main' ) {
-            $this->model->update(['isDefault' => 1], 'AniDbId = '.$aid.' AND title = '.$this->db->quote((string)$title)); 
+            $this->model->update(['isDefault' => 1], 'AniDbId = '.$aid.' AND title = '.$this->db->quote((string)$title));
           }
         }
       }
@@ -116,9 +116,9 @@ class AniDbTitles {
       }
 
       $carry[$item['aniDbId']]['titles'][] = $item['title'];
-      
+
       if ($item['isDefault'] == 1) {
-        $carry[$item['aniDbId']]['main'] = $item['title']; 
+        $carry[$item['aniDbId']]['main'] = $item['title'];
       }
 
       return $carry;

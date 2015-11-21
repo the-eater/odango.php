@@ -5,9 +5,10 @@ namespace Odango;
 class NyaaTorrent {
   protected static $indicators = array (
     "quality" => ['/^[0-9]+p$/i','/^[0-9]+x[0-9]+$/i', '720','1080','420'],
-    "source" => ['/^dvd(-?rip)?$/i', '/^bd(?:-?rip)?$/i'],
-    "audio" => ['aac', 'mp3', 'flac'],
+    "source" => ['/^dvd(-?rip)?$/i', '/^bd(?:-?rip)?$/i', '/blu-?ray/i'],
+    "audio" => ['/aac(-ac3)?/i', 'mp3', '/flac(-ac3)?/i'],
     "video" => ['x264', 'x265', 'avc', 'hevc', 'h.264', 'h.265'],
+    "video-depth" => ['/10b(it)?/i', '/8b(it)?/i', 'hi10p'],
     "container" => ['mp4','mkv', 'avi'],
     "crc32" => ['/^[a-f0-9]{8}$/i'],
     "type" => ['batch', 'ova', 'special', 'ona']
@@ -49,6 +50,24 @@ class NyaaTorrent {
     $torrent->category = (string)$xml->category;
     $torrent->publishDate = \DateTime::createFromFormat('D, d M Y H:i:s T', $xml->pubDate, new \DateTimeZone('UTC'));
     $torrent->userId = $userId;
+
+    return $torrent;
+  }
+
+  public static function fromArray($array)
+  {
+    $torrent = new NyaaTorrent();
+    $torrent->title = $array['title'];
+    $torrent->seeds = $array['seeders'];
+    $torrent->leechers = $array['leechers'];
+    $torrent->downloads = $array['downloads'];
+    $torrent->size = $array['filesize'];
+    $torrent->category = $array['categoryID'];
+    $torrent->torrentId = $array['id'];
+    $torrent->userId = $array['submitterID'];
+    $torrent->parseMetaInfo();
+
+    var_dump($torrent);
 
     return $torrent;
   }
@@ -141,7 +160,7 @@ class NyaaTorrent {
     }
 
     // vol / type / ep nr.
-    if (preg_match('~ (?:(Vol\.? ?([0-9]+))|([0-9]+(?:\.[0-9]+)?)|(batch(?: (\d+)-(\d+))?|o[vn]a|special)|(([0-9]+)-([0-9]+))|((s|season )([0-9]+)))( ?v([0-9]+))? ?(\[|\()~i', $data, $match)) {
+    if (preg_match('~ (?:(Vol\.? ?([0-9]+) (?:End)?)|([0-9]+(?:\.[0-9]+)?)|(batch(?: (\d+)-(\d+))?|o[vn]a|special)|(([0-9]+)-([0-9]+))|((s|season )([0-9]+)))( ?v([0-9]+))? ?(\[|\()~i', $data, $match)) {
       if (!empty($match[1])) {
         $meta['type'] = 'volume';
         $meta['volume'] = intval($match[2]);
@@ -170,6 +189,13 @@ class NyaaTorrent {
       if (!empty($match[13])) {
         $meta['version'] = intval($match[13]);
       }
+    }
+
+    /**
+     * If it doesn't have a type, but it has a source (BD / dvd) it's most likely a batch
+     */
+    if (!isset($meta['type']) && isset($meta['source'])) {
+        $meta['type'] = 'batch';
     }
 
     // title
