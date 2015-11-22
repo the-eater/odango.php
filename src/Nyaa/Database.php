@@ -11,18 +11,9 @@ class Database extends Nyaa {
 
     protected $table = 'nyaa';
 
-    protected $database;
-    protected $model;
-
-    public function __construct($dbinfo)
-    {
-        $this->database = new Connection($dbinfo['dsn'], $dbinfo['username'], $dbinfo['password']);
-        $this->model    = $this->database->factory("@{$this->table}");
-    }
-
     public function getDatabase()
     {
-        return $this->database;
+        return Registry::getDatabase();
     }
 
     /**
@@ -31,7 +22,7 @@ class Database extends Nyaa {
      * @return NyaaTorrent[]
      */
     public function getFeed($options = []) {
-        $pool = new \Stash\Pool(new \Stash\Driver\Sqlite());
+        $pool = Registry::getStash();
 
         $cache = $pool->getItem('nyaa/feed/database/'.hash('sha512', json_encode($options)));
 
@@ -81,7 +72,7 @@ class Database extends Nyaa {
         return $query->queryAll($params);
     }
 
-    public function canProvideFullData()
+    public function canProvideAllData()
     {
         return true;
     }

@@ -102,9 +102,9 @@ class NyaaTorrent {
     $unparsed = [];
 
     // group
-    if (preg_match('~^\[([^\]]+)\]([_ ])?~', $data, $match)) {
-      $meta['group'] = $match[1];
-      if (isset($match[2]) && $match[2] == '_') {
+    if (preg_match('~^(?:\[([^\]]+)\]|\(([^\)]+)\)|(.+) >> )([_ ])?~', $data, $match)) {
+      $meta['group'] = $match[1] ?: ($match[2] ?: $match[3]);
+      if (isset($match[4]) && $match[4] == '_') {
         $data = str_replace('_', ' ', $data);
       }
     }
@@ -199,7 +199,7 @@ class NyaaTorrent {
     }
 
     // title
-    if (preg_match('~(?:^|\)|\])((?:(?!\[[^\]+]\]| [-\\~] |( (Vol\. ?)?[0-9]+(-[0-9]+)?(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
+    if (preg_match('~^(?:.*(?:\]|>>|\)))?((?:(?!\[[^\]+]\]| [-\~] |( (Vol\. ?)?[0-9]+(-[0-9]+)?(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
       if ($match[1]) {
         $meta['title'] = trim($match[1]);
       }
@@ -339,7 +339,7 @@ class NyaaTorrent {
    */
   private function fetchUserId()
   {
-    $pool = new \Stash\Pool(new \Stash\Driver\Sqlite());
+    $pool = Registry::getStash();
 
     $cache = $pool->getItem('nyaa/user/'.$this->getTorrentId());
 

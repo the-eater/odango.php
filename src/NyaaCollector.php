@@ -28,7 +28,7 @@ class NyaaCollector {
   public function getNyaa()
   {
     if ($this->nyaa === null) {
-      $this->setNyaa(new Nyaa());
+      $this->setNyaa(Registry::getNyaa());
     }
 
     return $this->nyaa;
@@ -163,11 +163,27 @@ class NyaaCollector {
 
   /**
    * Searches for torrents by query and returns sets created from it
+   * Collects recursively if backend doesn't provide all data
    *
    * @param string $query The query to search for
    * @param array $options Extra options for the nyaa feed
    */
   public function collect($query, $options = [])
+  {
+    if (!$this->getNyaa()->canProvideAllData()) {
+        return $this->collectRecursive($query, $options);
+    }
+
+    return $this->collectSingleFeed($query, $options);
+  }
+
+  /**
+   * Searches for torrents by query and returns sets created from it, only fetches one feed.
+   *
+   * @param string $query
+   * @param array $options
+   */
+  public function collectSingleFeed($query, $options = [])
   {
     $feed = $this->getFeed($query, $options);
 

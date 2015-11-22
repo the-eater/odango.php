@@ -5,6 +5,7 @@ namespace Odango;
 class Registry {
     private static $stash;
     private static $database;
+    private static $nyaa;
 
     public static function setStash($stash)
     {
@@ -24,5 +25,15 @@ class Registry {
     public static function getDatabase()
     {
         return self::$database;
+    }
+
+    public static function getNyaa()
+    {
+        return self::$nyaa;
+    }
+
+    public static function setNyaa($nyaa)
+    {
+        self::$nyaa = $nyaa;
     }
 }

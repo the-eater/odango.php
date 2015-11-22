@@ -52,6 +52,11 @@ class Nyaa {
     "A+" => 3
   ];
 
+  public function canProvideAllData()
+  {
+    return false;
+  }
+
   /**
    * Get torrent feed for given options
    * @param array $options array of options available options consist of: query, category, filter, offset and user
@@ -83,9 +88,9 @@ class Nyaa {
     }
 
     $fullUrl = $this->baseUrl.'?'.http_build_query($get);
-    
-    $pool = new \Stash\Pool(new \Stash\Driver\Sqlite());
-    
+
+    $pool = Registry::getStash();
+
     $cache = $pool->getItem('nyaa/feed/'.hash('sha512', $fullUrl));
 
     if ($cache->isMiss()) {

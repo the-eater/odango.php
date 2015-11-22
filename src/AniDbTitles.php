@@ -20,12 +20,11 @@ class AniDbTitles {
    * @param string $table The table to store and access the cached anidb titles
    * @return AniDbTitles The created AniDbTitles instance
    */
-  static function construct($dbInfo)
+  static function construct()
   {
     $aniDbTitles = new AniDbTitles();
-    $aniDbTitles->dbInfo = $dbInfo;
 
-    $aniDbTitles->db = new Connection($dbInfo['dsn'], $dbInfo['username'], $dbInfo['password']);
+    $aniDbTitles->db = Registry::getDatabase();
     $aniDbTitles->model = $aniDbTitles->db->factory('@' . $aniDbTitles->table);
 
     return $aniDbTitles;
