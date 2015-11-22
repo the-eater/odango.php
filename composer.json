@@ -1,5 +1,5 @@
 {
-    "name": "eaterofcode/odango.php",
+    "name": "odango/odango.php",
     "require": {
         "ark/database": "^0.1.5",
         "php-curl-class/php-curl-class": "^4.6",
@@ -13,6 +13,6 @@
         }
     ],
     "autoload": {
-      "psr-4": { "Odango\\": "src/" }
+        "psr-4": { "Odango\\": "src/" }
     }
 }
