@@ -67,8 +67,6 @@ class NyaaTorrent {
     $torrent->userId = $array['submitterID'];
     $torrent->parseMetaInfo();
 
-    var_dump($torrent);
-
     return $torrent;
   }
 
@@ -199,7 +197,7 @@ class NyaaTorrent {
     }
 
     // title
-    if (preg_match('~^(?:.*(?:\]|>>|\)))?((?:(?!\[[^\]+]\]| [-\~] |( (Vol\. ?)?[0-9]+(-[0-9]+)?(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
+    if (preg_match('~^(?:.*(?:\]|>>|\)))?((?:(?!\[[^\]+]\]| [-\~] (?:[0-9]|vol|batch|special|o[nv]a)|( (Vol\. ?)?[0-9]+(-[0-9]+)?(v[0-9]+)? ?)?(\(|\[|\.[a-z0-9]+$)).)+)~', $data, $match)) {
       if ($match[1]) {
         $meta['title'] = trim($match[1]);
       }

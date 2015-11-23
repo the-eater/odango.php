@@ -174,6 +174,7 @@ class NyaaCollector {
         return $this->collectRecursive($query, $options);
     }
 
+
     return $this->collectSingleFeed($query, $options);
   }
 

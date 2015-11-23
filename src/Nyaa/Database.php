@@ -46,7 +46,7 @@ class Database extends Nyaa {
 
     private function getResults($options)
     {
-        $query = $this->database->builder()
+        $query = $this->getDatabase()->builder()
             ->select()
             ->from($this->table);
         $params = [];
@@ -62,14 +62,19 @@ class Database extends Nyaa {
             $params['user'] = $options['user'];
         }
 
-        foreach (explode(' ', $options['query']) as $index => $queryBit) {
-            $where[] = 'title LIKE :queryBit' . $index;
-            $params['queryBit' . $index] = '%'.str_replace('%', "\\%", $queryBit).'%';
-        }
+        // ([\\s\\]\\)]|^)Log[_ ]Horizon([\\s\\]\\)]|$)
+        $queryBits = explode(' ', $options['query']);
+
+        $where[] = 'title LIKE :query';
+        $params['query'] = '%' . implode('%', array_map(function ($a){ return str_replace('%', '\\%', $a); }, $queryBits)) . '%';
+
+        $where[] = 'title REGEXP :regex';
+        $params['regex'] = '([\\s\\]\\)_]|^)' . implode('.*', $queryBits) . '([\\s\\]\\)_]|$)';
 
         $query->where(implode(' AND ', $where));
 
         return $query->queryAll($params);
+
     }
 
     public function canProvideAllData()
