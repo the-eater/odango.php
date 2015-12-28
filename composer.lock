@@ -4,20 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8b907b3c4ac28646d166cffaea0e6e5d",
+    "hash": "3f05566d2b039517e1e3fd184822f934",
+    "content-hash": "e67c8c6b0261f4956874b58a1db52467",
     "packages": [
         {
             "name": "ark/database",
-            "version": "v0.1.5",
+            "version": "v0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/arkphp/database.git",
-                "reference": "5ae67b913d3a9e41c4a37763f02481ff6b6aaa0a"
+                "reference": "f96c829a015d2808e87222c5ab79fa1bad48d203"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/arkphp/database/zipball/5ae67b913d3a9e41c4a37763f02481ff6b6aaa0a",
-                "reference": "5ae67b913d3a9e41c4a37763f02481ff6b6aaa0a",
+                "url": "https://api.github.com/repos/arkphp/database/zipball/f96c829a015d2808e87222c5ab79fa1bad48d203",
+                "reference": "f96c829a015d2808e87222c5ab79fa1bad48d203",
                 "shasum": ""
             },
             "type": "library",
@@ -47,20 +48,20 @@
                 "sqlite",
                 "sqlite3"
             ],
-            "time": "2015-05-27 13:40:40"
+            "time": "2015-08-25 17:18:06"
         },
         {
             "name": "php-curl-class/php-curl-class",
-            "version": "4.6.8",
+            "version": "4.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-curl-class/php-curl-class.git",
-                "reference": "473f080a12322365a4dac1e1a414590ea9fc1839"
+                "reference": "91f937bb9e57fd1e1a550baab9f03f5a6e4203af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/473f080a12322365a4dac1e1a414590ea9fc1839",
-                "reference": "473f080a12322365a4dac1e1a414590ea9fc1839",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/91f937bb9e57fd1e1a550baab9f03f5a6e4203af",
+                "reference": "91f937bb9e57fd1e1a550baab9f03f5a6e4203af",
                 "shasum": ""
             },
             "require": {
@@ -72,9 +73,9 @@
             },
             "type": "library",
             "autoload": {
-                "classmap": [
-                    "src/"
-                ]
+                "psr-4": {
+                    "Curl\\": "src/Curl/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -103,7 +104,7 @@
                 "web service",
                 "xml"
             ],
-            "time": "2015-08-13 15:50:05"
+            "time": "2015-10-31 18:25:18"
         },
         {
             "name": "tedivm/stash",
