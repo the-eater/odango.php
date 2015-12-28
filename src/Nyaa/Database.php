@@ -2,9 +2,9 @@
 
 namespace Odango\OdangoPhp\Nyaa;
 
-use \Odango\Nyaa;
-use \Odango\Registry;
-use \Odango\NyaaTorrent;
+use \Odango\OdangoPhp\Nyaa;
+use \Odango\OdangoPhp\Registry;
+use \Odango\OdangoPhp\NyaaTorrent;
 use \Ark\Database\Connection;
 
 class Database extends Nyaa {
