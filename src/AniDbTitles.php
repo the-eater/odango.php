@@ -1,6 +1,6 @@
 <?php
 
-namespace Odango;
+namespace Odango\OdangoPhp;
 
 use \Curl\Curl;
 use \Ark\Database\Connection;

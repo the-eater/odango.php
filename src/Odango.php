@@ -1,6 +1,6 @@
 <?php
 
-namespace Odango;
+namespace Odango\OdangoPhp;
 
 class Odango {
   protected $nyaaCollector;

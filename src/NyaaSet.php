@@ -1,6 +1,6 @@
 <?php
 
-namespace Odango;
+namespace Odango\OdangoPhp;
 
 class NyaaSet {
   private $allTorrents = [];
@@ -47,15 +47,51 @@ class NyaaSet {
     return null;
   }
 
+  public function getInfo()
+  {
+    $seeds    = [];
+    $leechers = [];
+    $size     = [];
+    $amount   = 0;
+
+    foreach ($this->getTorrents() as $torrent) {
+        $seeds[] = intval($torrent->seeds);
+        $leechers[] = intval($torrent->leechers);
+        $size[] = intval($torrent->size);
+        $amount++;
+    }
+
+    return [
+        "amount" => $amount,
+        "seeds" => [
+            "min" => min($seeds),
+            "max" => max($seeds),
+            "avg" => array_sum($seeds) / count($seeds)
+        ],
+        "leechers" => [
+            "min" => min($leechers),
+            "max" => max($leechers),
+            "avg" => array_sum($leechers) / count($leechers)
+        ],
+        "size" => [
+            "min" => min($size),
+            "max" => max($size),
+            "avg" => array_sum($size) / count($size),
+            "total" => array_sum($size)
+        ]
+    ];
+  }
+
   public function toArray()
   {
     $arr = [
        "meta"     => $this->getFirstMeta(),
+       "info"     => $this->getInfo(),
        "torrents" => array_map(function ($item) {
            return $item->toArray();
        }, $this->getTorrents())
     ];
 
     return $arr;
-  }  
+  }
 }

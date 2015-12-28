@@ -1,6 +1,6 @@
 <?php
 
-namespace Odango\Nyaa;
+namespace Odango\OdangoPhp\Nyaa;
 
 use \Odango\Nyaa;
 use \Odango\Registry;
@@ -68,8 +68,9 @@ class Database extends Nyaa {
         $where[] = 'title LIKE :query';
         $params['query'] = '%' . implode('%', array_map(function ($a){ return str_replace('%', '\\%', $a); }, $queryBits)) . '%';
 
-        $where[] = 'title REGEXP :regex';
-        $params['regex'] = '([\\s\\]\\)_]|^)' . implode('.*', $queryBits) . '([\\s\\]\\)_]|$)';
+        $where[] = 'MATCH(title) AGAINST ( :regex )';
+        //      $params['regex'] = '([\\s\\]\\)_]|^)' . implode('.*', $queryBits) . '([\\s\\]\\)_]|$)';
+        $params['regex'] = $options['query'];
 
         $query->where(implode(' AND ', $where));
 

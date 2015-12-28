@@ -13,6 +13,6 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Odango\\": "src/" }
+        "psr-4": { "Odango\\OdangoPhp\\": "src/" }
     }
 }

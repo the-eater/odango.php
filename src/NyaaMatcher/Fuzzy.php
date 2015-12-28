@@ -1,6 +1,6 @@
 <?php
 
-namespace Odango\NyaaMatcher;
+namespace Odango\OdangoPhp\NyaaMatcher;
 
 class Fuzzy {
 
