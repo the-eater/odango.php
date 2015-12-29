@@ -3,9 +3,9 @@
 namespace Odango\OdangoPhp;
 
 class Registry {
-    private static $stash;
-    private static $database;
-    private static $nyaa;
+    protected static $stash;
+    protected static $database;
+    protected static $nyaa;
 
     public static function setStash($stash)
     {
