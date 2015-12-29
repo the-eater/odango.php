@@ -66,7 +66,7 @@ class NyaaTorrent {
     $torrent->category = $array['categoryID'];
     $torrent->torrentId = $array['id'];
     $torrent->userId = $array['submitterID'];
-    $torrent->recordUpdated = $array['record_updated']
+    $torrent->recordUpdated = $array['record_updated'];
     $torrent->parseMetaInfo();
 
     return $torrent;
