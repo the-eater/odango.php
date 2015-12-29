@@ -9,31 +9,31 @@ class Registry {
 
     public static function setStash($stash)
     {
-        self::$stash = $stash;
+        static::$stash = $stash;
     }
 
     public static function getStash()
     {
-        return self::$stash;
+        return static::$stash;
     }
 
     public static function setDatabase($database)
     {
-        self::$database = $database;
+        static::$database = $database;
     }
 
     public static function getDatabase()
     {
-        return self::$database;
+        return static::$database;
     }
 
     public static function getNyaa()
     {
-        return self::$nyaa;
+        return static::$nyaa;
     }
 
     public static function setNyaa($nyaa)
     {
-        self::$nyaa = $nyaa;
+        static::$nyaa = $nyaa;
     }
 }
