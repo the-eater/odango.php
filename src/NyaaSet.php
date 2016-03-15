@@ -36,6 +36,15 @@ class NyaaSet {
     return array_values($this->torrentsByItemHash);
   }
 
+  public function getSortedTorrents()
+  {
+    $torrents = $this->getTorrents();
+    usort($torrents, function ($a, $b) {
+        return $a->getSeriesNumber() - $b->getSeriesNumber();
+    });
+    return $torrents;
+  }
+
   public function getFirstMeta()
   {
     $torrents = array_values($this->getTorrents());
@@ -89,7 +98,7 @@ class NyaaSet {
        "info"     => $this->getInfo(),
        "torrents" => array_map(function ($item) {
            return $item->toArray();
-       }, $this->getTorrents())
+       }, $this->getSortedTorrents())
     ];
 
     return $arr;

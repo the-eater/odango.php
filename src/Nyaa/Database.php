@@ -9,7 +9,7 @@ use \Ark\Database\Connection;
 
 class Database extends Nyaa {
 
-    protected $table = 'nyaa';
+    protected $table = 'odango.nyaa';
 
     public function getDatabase()
     {
@@ -53,24 +53,24 @@ class Database extends Nyaa {
         $where = [];
 
         if (isset($options['category'])) {
-            $where[] = 'categoryID = :category';
+            $where[] = 'nyaa."categoryID" = :category';
             $params['category'] = $options['category'];
         }
 
         if (isset($options['user'])) {
-            $where[] = 'submitterID = :user';
+            $where[] = 'nyaa."submitterID" = :user';
             $params['user'] = $options['user'];
         }
 
         // ([\\s\\]\\)]|^)Log[_ ]Horizon([\\s\\]\\)]|$)
         $queryBits = explode(' ', $options['query']);
 
-        $where[] = 'title LIKE :query';
+        $where[] = 'nyaa.title LIKE :query';
         $params['query'] = '%' . implode('%', array_map(function ($a){ return str_replace('%', '\\%', $a); }, $queryBits)) . '%';
 
-        $where[] = 'MATCH(title) AGAINST ( :regex )';
+        //$where[] = 'MATCH(title_index) AGAINST ( :regex )';
         //      $params['regex'] = '([\\s\\]\\)_]|^)' . implode('.*', $queryBits) . '([\\s\\]\\)_]|$)';
-        $params['regex'] = $options['query'];
+       //  $params['regex'] = $options['query'];
 
         $query->where(implode(' AND ', $where));
 

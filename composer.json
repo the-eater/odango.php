@@ -3,7 +3,8 @@
     "require": {
         "ark/database": "^0.1.5",
         "php-curl-class/php-curl-class": "^4.6",
-        "tedivm/stash": "^0.13.1"
+        "tedivm/stash": "^0.13.1",
+        "elasticsearch/elasticsearch": "^2.1"
     },
     "license": "MIT",
     "authors": [

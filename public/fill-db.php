@@ -1,5 +1,5 @@
 <?php
 
 include '../vendor/autoload.php';
-
-Odango\AniDbTitles::construct([ 'dsn' => 'mysql:dbname=odango;host=localhost', 'username' => 'root', 'password' => null ])->syncDatabase();
+Odango\OdangoPhp\Registry::setDatabase(new Ark\Database\Connection('mysql:dbname=odango', 'root'));
+Odango\OdangoPhp\AniDbTitles::construct()->syncDatabase();

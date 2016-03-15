@@ -7,7 +7,7 @@ use \Ark\Database\Connection;
 
 class AniDbTitles {
   protected $dbInfo = null;
-  protected $table = 'AniDbTitle';
+  protected $table = 'odango.AniDbTitle';
   protected $titleDumpUrl = 'http://anidb.net/api/anime-titles.xml.gz';
 
   protected $db;
@@ -87,7 +87,7 @@ class AniDbTitles {
     return $builder
       ->select('search.title')
       ->from([$this->table . ' as main'])
-      ->join($this->table . ' as search', 'main.aniDbId = search.aniDbId')
+      ->join($this->table . ' as search', 'main."aniDbId" = search."aniDbId"')
       ->where('main.title = :title')
       ->queryColumn([ 'title' => $title ]);
 
@@ -128,13 +128,13 @@ class AniDbTitles {
   {
     $builder = $this->db->builder();
 
+    $query = 'SELECT DISTINCT "AniDbTitle".title FROM odango."AniDbTitle" JOIN odango.nyaa ON "AniDbTitle".title = nyaa.meta->>\'title\' WHERE lower("AniDbTitle".title) LIKE lower(:title) LIMIT 25';
+
+    $builder = $builder->setSql($query);
+
+
     return $builder
-      ->distinct()
-      ->select('title')
-      ->from($this->table)
-      ->where('title LIKE :title')
-      ->limit(25)
-      ->queryColumn([ 'title' => str_replace('%', '\\%', $title).'%' ]);
+        ->queryColumn([ 'title' => str_replace('%', '\\%', $title).'%' ]);
   }
 
   public function createTable()
